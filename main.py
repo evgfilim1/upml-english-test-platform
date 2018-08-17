@@ -132,6 +132,7 @@ def add_users():
     users = {}
     if form.validate_on_submit():
         for name in form.users.data.split('\n'):
+            name = name.strip()
             if name == '':
                 continue
             if find_user(name) is not None:
