@@ -1,0 +1,19 @@
+{# TODO: nice and interactive edit #}
+<div class="question-card">
+    {% if editable %}
+        <i class="float-right">({{ q.points }} point{% if q.points != 1 %}s{% endif %})</i>
+        <b class="float-left">#{{ q.id }}:</b>
+    {% endif %}
+    {{ g.md(q.title)|safe }}
+    {% if q.text %}
+        {{ g.md(q.text)|safe }}
+    {% endif %}
+    <p><a href="{{ url_for('edit_question', question_id=q.id) }}">Редактировать вопрос</a></p>
+    <div class="answers">
+        {# TODO: shuffle answers #}
+        {% for ans in q.answers %}
+            <button class="btn btn-outline-primary w-100 answer {{ 'answered' if ans in g.user.answers else '' }} {{ 'correct' if show_correct and ans.is_correct else '' }}"
+                    id="q{{ q.id }}-a{{ ans.id }}">{{ ans.text }}</button>
+        {% endfor %}
+    </div>
+</div>

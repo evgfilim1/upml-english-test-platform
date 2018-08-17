@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>The simplest English Test</h1>
+    {% include 'welcome.html' %}
+    <br/>
+    <h2>Войди, чтобы начать</h2>
+    <form method="post" id="login-form">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.login.label() }}
+            {{ form.login(class='form-control' + (' is-invalid' if form.login.errors else '')) }}
+            {% for error in form.login.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.password.label() }}
+            {{ form.password(class='form-control' + (' is-invalid' if form.password.errors else '')) }}
+            {% for error in form.password.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ form.submit(class='btn btn-success') }}
+    </form>
+{% endblock %}

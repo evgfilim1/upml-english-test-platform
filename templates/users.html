@@ -1,0 +1,48 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+    <h1 class="d-print-none">Пользователи</h1>
+    <h2 class="d-print-none">Недавно добавленные</h2>
+    {% if new_users %}
+        <table class="table table-bordered to-print">
+            {% for user, password in new_users.items() %}
+                <tr>
+                    <td class="col-4">{{ user.name }}</td>
+                    <td class="col-3">{{ password }}</td>
+                    <td class="col-5">{{ request.url_root }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <p><b>При обновлении страницы данные будут утеряны!</b></p>
+        <button class="btn btn-link d-print-none" id="print">Напечатать список</button>
+    {% else %}
+        <p><i>Пусто</i></p>
+    {% endif %}
+    <h2 class="d-print-none">Добавить пользователей</h2>
+    <form method="post" class="d-print-none">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.users.label() }}
+            {{ form.users(class='form-control') }}
+        </div>
+        {{ form.submit(class='btn btn-primary') }}
+    </form>
+    <h2 class="d-print-none">Добавить администратора</h2>
+    <form method="post" action="{{ url_for('add_admin') }}" class="d-print-none">
+        {{ admin_form.hidden_tag() }}
+        <div class="form-group">
+            {{ admin_form.login.label() }}
+            {{ admin_form.login(class='form-control' + (' is-invalid' if admin_form.login.errors else '')) }}
+            {% for error in admin_form.login.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ admin_form.password.label() }}
+            {{ admin_form.password(class='form-control') }}
+        </div>
+        {{ admin_form.submit(class='btn btn-primary') }}
+    </form>
+{% endblock %}
+{% block scripts %}
+    <script src="/static/js/admin_users.js"></script>
+{% endblock %}

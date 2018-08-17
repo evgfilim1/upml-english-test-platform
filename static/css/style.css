@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.question-card, .mb4 {
+    margin-bottom: 4rem;
+}
+
+.points {
+    font-weight: bold;
+}
+
+.pre-question-card {
+    margin-bottom: 2rem;
+}
+
+button, .btn {
+    margin: 2px;
+}
+
+.answers {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 0.25rem;
+}
+
+@media (min-width: 768px) {
+    .answers {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media print {
+    .to-print {
+        font-size: 16pt;
+    }
+}
+
+textarea {
+    resize: none;
+}
+
+a.pre-solve {
+    font-size: 32pt;
+}
+
+p.pre-solve {
+    font-size: 16pt;
+}
+
+.answer {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+#fullscreen {
+    width: 100%;
+    height: auto;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+#fullscreen-content {
+    position: relative;
+    float: left;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+#remaining-text {
+    /* If you want the text to be more noticeable, uncomment the lines below */
+    /*font-size: 14pt;
+    font-weight: bold;*/
+    margin-right: 1rem;
+}
+
+body {
+    padding-top: 4.5rem;
+    font-family: 'Roboto', sans-serif;
+}

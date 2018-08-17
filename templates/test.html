@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block navbar %}
+    <span class="navbar-text" id="remaining-text">До окончания теста осталось
+        <span id="remaining">{{ remaining }}</span>
+    </span>
+    <form class="d-inline" action="{{ url_for('result') }}" method="post" id="finish-test">
+        <button type="submit" class="btn btn-success">Завершить тест</button>
+    </form>
+{% endblock %}
+{% block content %}
+    {% for q in questions %}
+        {% include 'card.html' %}
+    {% endfor %}
+{% endblock %}
+{% block scripts %}
+    <script src="/static/js/test.js"></script>
+{% endblock %}

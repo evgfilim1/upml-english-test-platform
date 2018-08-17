@@ -1,0 +1,34 @@
+<form method="post">
+    {{ form.hidden_tag() }}
+    {# question, caption, points, +answers, +number #}
+    <div class="form-group">
+        {{ form.question.label() }}
+        {{ form.question(class='form-control') }}
+    </div>
+    <div class="form-group">
+        {{ form.caption.label() }}
+        {{ form.caption(class='form-control') }}
+    </div>
+    <div class="form-group">
+        {{ form.points.label() }}
+        {{ form.points(min=0, class='form-control' + (' is-invalid' if form.points.errors else '')) }}
+        {% for error in form.points.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.answers.label() }}
+        {{ form.answers(class='form-control' + (' is-invalid' if form.answers.errors else '')) }}
+        {% for error in form.answers.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.number.label() }}
+        {{ form.number(class='form-control' + (' is-invalid' if form.number.errors else '')) }}
+        {% for error in form.number.errors %}
+            <div class="invalid-feedback">{{ error }}</div>
+        {% endfor %}
+    </div>
+    {{ form.submit(class='btn btn-primary') }}
+</form>

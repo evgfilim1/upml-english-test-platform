@@ -1,0 +1,59 @@
+{# TODO: margins #}
+{% extends 'admin_base.html' %}
+{% block content %}
+    <h1>Результаты теста</h1>
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="show-admins">
+        <label for="show-admins" class="custom-control-label">Показывать администраторов</label>
+    </div>
+    <h2>Решили</h2>
+    <div class="list-group">
+        {% for user in users if user.end_time %}
+            <a class="list-group-item d-flex align-items-center justify-content-between {{ 'is-admin' if user.is_admin else '' }}"
+               href="{{ url_for('result', user_id=user.id) }}">
+                <div>
+                    {{ user.name }}
+                    {% if user.is_admin %}
+                        <span class="badge badge-pill badge-warning">admin</span>
+                    {% endif %}
+                </div>
+                <span class="badge badge-primary badge-pill">{{ user.points }}</span>
+            </a>
+        {% else %}
+            <p><i>Список пуст</i></p>
+        {% endfor %}
+    </div>
+    <h2>Решают</h2>
+    <ul class="list-group">
+        {% for user in users if user.start_time and not user.end_time %}
+            <li class="list-group-item {{ 'is-admin' if user.is_admin else '' }}">
+                <div>
+                    {{ user.name }}
+                    {% if user.is_admin %}
+                        <span class="badge badge-pill badge-warning">admin</span>
+                    {% endif %}
+                </div>
+            </li>
+        {% else %}
+            <p><i>Список пуст</i></p>
+        {% endfor %}
+    </ul>
+    <h2>Не решили</h2>
+    <ul class="list-group">
+        {% for user in users if not user.start_time %}
+            <li class="list-group-item {{ 'is-admin' if user.is_admin else '' }}">
+                <div>
+                    {{ user.name }}
+                    {% if user.is_admin %}
+                        <span class="badge badge-pill badge-warning">admin</span>
+                    {% endif %}
+                </div>
+            </li>
+        {% else %}
+            <p><i>Список пуст</i></p>
+        {% endfor %}
+    </ul>
+{% endblock %}
+{% block scripts %}
+    <script src="/static/js/admin.js"></script>
+{% endblock %}

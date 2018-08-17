@@ -1,0 +1,28 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+    <h1>Вопросы</h1>
+    <p><i>Нажмите на вариант ответа, чтобы пометить его правильным</i></p>
+    {% for q in questions %}
+        {% include 'card.html' %}
+    {% endfor %}
+    <h2>Добавить вопрос</h2>
+    {% include 'question_form.html' %}
+    <h2>Импортировать вопросы</h2>
+    <p class="text-danger"><b>После импорта все вопросы, ответы и решения будут сброшены!</b></p>
+    <form action="{{ url_for('upload_questions') }}" enctype="multipart/form-data" method="post">
+        {{ import_form.hidden_tag() }}
+        <div class="custom-file">
+            {{ import_form.file(class='custom-file-input' + (' is-invalid' if import_form.file.errors else ''), accept='application/json') }}
+            {{ import_form.file.label(class='custom-file-label') }}
+            {% for error in import_form.file.errors %}
+                <div class="invalid-feedback">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+        {{ import_form.submit(class='btn btn-primary') }}
+    </form>
+{% endblock %}
+{% block scripts %}
+    <script src="/static/js/admin_questions.js"></script>
+{% endblock %}

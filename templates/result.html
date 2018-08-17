@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% set admin = user.id != g.user.id %}
+    {% if admin %}
+        <h1>Результаты пользователя {{ user.name }}</h1>
+    {% else %}
+        <h1>Поздравляю!</h1>
+    {% endif %}
+    <p class="mb4">
+        {% if admin %}
+            Набрано баллов:
+        {% else %}
+            Твой результат:
+        {% endif %}
+        <span class="points">{{ user.points }}</span>
+        из
+        <span class="points">{{ total }}</span>
+    </p>
+    <h2 class="pre-question-card">
+        {% if admin %}
+            Ошибки
+        {% else %}
+            Твои ошибки
+        {% endif %}
+    </h2>
+    <div>
+        {% for q in failed %}
+            {% include 'card.html' %}
+        {% else %}
+            <p class="mb4"><i>Отсутствуют</i></p>
+        {% endfor %}
+    </div>
+    <h2 class="pre-question-card">Пропущенные вопросы</h2>
+    <div>
+        {% for q in skipped %}
+            {% include 'card.html' %}
+        {% else %}
+            <p class="mb4"><i>Отсутствуют</i></p>
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="/static/js/result.js"></script>
+{% endblock %}
