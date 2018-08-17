@@ -172,7 +172,16 @@ def manage_users():
 @app.route('/admin/reset/<int:user_id>')
 @admin_required
 def reset(user_id):
-    pass
+    u = User.query.get(user_id)
+    if not u:
+        flash(f'Пользователь с id={user_id} не найден')
+        return redirect(back('admin'))
+    u.points = None
+    u.start_time = None
+    u.end_time = None
+    db.session.commit()
+    flash('Результаты сброшены!', 'success')
+    return redirect(back('admin'))
 
 
 @app.route('/admin/questions/', methods=['GET', 'POST'])

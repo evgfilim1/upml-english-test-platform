@@ -3,22 +3,27 @@
 {% block content %}
     <h1>Результаты теста</h1>
     <div class="custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="show-admins">
+        <input type="checkbox" class="custom-control-input" id="show-admins" checked>
         <label for="show-admins" class="custom-control-label">Показывать администраторов</label>
     </div>
     <h2>Решили</h2>
     <div class="list-group">
         {% for user in users if user.end_time %}
-            <a class="list-group-item d-flex align-items-center justify-content-between {{ 'is-admin' if user.is_admin else '' }}"
-               href="{{ url_for('result', user_id=user.id) }}">
-                <div>
-                    {{ user.name }}
-                    {% if user.is_admin %}
-                        <span class="badge badge-pill badge-warning">admin</span>
-                    {% endif %}
-                </div>
-                <span class="badge badge-primary badge-pill">{{ user.points }}</span>
-            </a>
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="w-100 list-group-item d-flex align-items-center justify-content-between {{ 'is-admin' if user.is_admin else '' }}"
+                   href="{{ url_for('result', user_id=user.id) }}">
+                    <div>
+                        {{ user.name }}
+                        {% if user.is_admin %}
+                            <span class="badge badge-pill badge-warning">admin</span>
+                        {% endif %}
+                    </div>
+                    <span class="badge badge-primary badge-pill">{{ user.points }}</span>
+                </a>
+                <a class="btn btn-danger" href="{{ url_for('reset', user_id=user.id) }}">
+                    Сбросить результат
+                </a>
+            </div>
         {% else %}
             <p><i>Список пуст</i></p>
         {% endfor %}
