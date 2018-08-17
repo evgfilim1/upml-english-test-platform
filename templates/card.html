@@ -8,7 +8,9 @@
     {% if q.text %}
         {{ g.md(q.text)|safe }}
     {% endif %}
-    <p><a href="{{ url_for('edit_question', question_id=q.id) }}">Редактировать вопрос</a></p>
+    {% if editable %}
+        <p><a href="{{ url_for('edit_question', question_id=q.id) }}">Редактировать вопрос</a></p>
+    {% endif %}
     <div class="answers">
         {# TODO: shuffle answers #}
         {% for ans in q.answers %}
