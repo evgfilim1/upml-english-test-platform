@@ -232,7 +232,7 @@ def edit_question(question_id):
     q = Question.query.get(question_id)
     if q is None:
         flash(f'Вопроса с id={question_id} не существует')
-        return redirect(back('admin'))
+        return redirect(back('manage_questions'))
     form = AddQuestionForm()
     if form.validate_on_submit():
         q.title = form.question.data
@@ -274,6 +274,19 @@ def upload_questions():
         db.session.commit()
         flash('Успешно импортировано!', 'success')
     return redirect(url_for('manage_questions'))
+
+
+@app.route('/admin/questions/delete/<int:question_id>')
+@admin_required
+def delete_question(question_id):
+    q = Question.query.get(question_id)
+    if not q:
+        flash(f'Вопроса с id={question_id} не существует')
+        return redirect(back('manage_questions'))
+    db.session.delete(q)
+    db.session.commit()
+    flash('Вопрос удалён!', 'success')
+    return redirect(back('manage_questions'))
 
 
 if __name__ == '__main__':
