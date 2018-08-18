@@ -22,3 +22,10 @@ $('textarea').on('input', function (){
 $(document).ready(function () {
     $('textarea').trigger('input');
 });
+
+$('.destructive-confirm').click(function (ev) {
+    if (!confirm('Это — деструктивная операция. Продолжить?')) {
+        ev.preventDefault();
+        ev.stopPropagation();
+    }
+});

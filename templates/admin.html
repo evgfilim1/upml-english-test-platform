@@ -20,7 +20,7 @@
                     </div>
                     <span class="badge badge-primary badge-pill">{{ user.points }}</span>
                 </a>
-                <a class="btn btn-danger" href="{{ url_for('reset', user_id=user.id) }}">
+                <a class="btn btn-danger destructive-confirm" href="{{ url_for('reset', user_id=user.id) }}">
                     Сбросить результат
                 </a>
             </div>
