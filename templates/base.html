@@ -56,6 +56,15 @@
                 </div>
             {% endfor %}
         {% endif %}{% endwith %}
+        <noscript>
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger" role="alert">
+                        Для правильной работы сайта включите JavaScript в настройках браузера
+                    </div>
+                </div>
+            </div>
+        </noscript>
     </div>
     {% block content %}{% endblock %}
 </div>
