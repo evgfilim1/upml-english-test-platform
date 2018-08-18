@@ -8,12 +8,11 @@ from app import app
 from forms import LoginForm, AddUsersForm, AddAdminForm, AddQuestionForm, ImportQuestionsForm
 from models import Question, db, UserAnswer, User, Answer
 from utils import find_user, get_user, login_required, admin_required, back
-from api import SaveAnswer, UserInfo, ChangeQuestionData
+from api import SaveAnswer, ChangeQuestionData
 import json
 
 api = Api(app)
 api.add_resource(SaveAnswer, '/api/answer')
-# api.add_resource(UserInfo, '/api/currentUser')
 api.add_resource(ChangeQuestionData, '/api/admin/question')
 
 
@@ -145,8 +144,8 @@ def add_users():
             db.session.add(user)
         db.session.commit()
         form.users.data = ''
-    return render_template('users.html', new_users=users, form=form, title='Добавить пользователей',
-                           admin_form=admin_form)
+    return render_template('add_users.html', new_users=users, form=form,
+                           title='Добавить пользователей', admin_form=admin_form)
 
 
 @app.route('/admin/users/addAdmin', methods=['POST'])
@@ -166,7 +165,8 @@ def add_admin():
 @app.route('/admin/users/')
 @admin_required
 def manage_users():
-    pass
+    return render_template('manage_users.html', users=User.query.all(),
+                           title='Управление пользователями')
 
 
 @app.route('/admin/reset/<int:user_id>')
@@ -182,6 +182,19 @@ def reset(user_id):
     db.session.commit()
     flash('Результаты сброшены!', 'success')
     return redirect(back('admin'))
+
+
+@app.route('/admin/users/delete/<int:user_id>')
+@admin_required
+def delete_user(user_id):
+    u = User.query.get(user_id)
+    if not u:
+        flash(f'Пользователь с id={user_id} не найден')
+        return redirect(back('manage_users'))
+    db.session.delete(u)
+    db.session.commit()
+    flash('Пользователь удалён!', 'success')
+    return redirect(back('manage_users'))
 
 
 @app.route('/admin/questions/', methods=['GET', 'POST'])

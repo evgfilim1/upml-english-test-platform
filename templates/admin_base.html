@@ -10,7 +10,7 @@
             Пользователи
         </a>
         <div class="dropdown-menu" aria-labelledby="manage-users">
-            <a class="dropdown-item disabled" href="#">Управление</a>
+            <a class="dropdown-item" href="{{ url_for('manage_users') }}">Управление</a>
             <a class="dropdown-item" href="{{ url_for('add_users') }}">Добавить</a>
         </div>
     </li>
