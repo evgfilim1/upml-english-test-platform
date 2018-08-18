@@ -6,7 +6,7 @@ from models import User, Answer, UserAnswer, db
 
 
 def find_user(name):
-    return User.query.filter_by(name=name).first()
+    return User.query.filter_by(name=name).one_or_none()
 
 
 def get_user(user_id):

@@ -17,14 +17,6 @@ class SaveAnswer(Resource):
         return result
 
 
-class UserInfo(Resource):
-    @staticmethod
-    def get():
-        return {
-            'id': getattr(g.user, 'id', None)
-        }
-
-
 class ChangeQuestionData(Resource):
     @staticmethod
     def post():
