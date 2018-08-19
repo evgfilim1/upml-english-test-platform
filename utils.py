@@ -20,6 +20,8 @@ def save_answer(answer_id, user_id=None):
         user = get_user(user_id)
     if answer_id is None or user is None:
         return False
+    if user.end_time is not None:
+        return True  # just ignore
     answer = Answer.query.get(answer_id)
     if answer is None:
         # TODO: log this, maybe it was right
