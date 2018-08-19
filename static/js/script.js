@@ -47,3 +47,5 @@ $('.destructive-confirm').click(function (ev) {
         ev.stopPropagation();
     }
 });
+
+$('#noscript').hide();
