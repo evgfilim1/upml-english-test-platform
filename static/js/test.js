@@ -18,34 +18,33 @@ function counter() {
     }
 }
 
+function worker() {
+    $('.answered')
+        .removeClass('btn-outline-primary')
+        .addClass('btn-primary');
+    setTimeout(worker, 500);
+}
+
 $(document).ready(function () {
     remaining = $('#remaining').text();
     counter();
-    $('.answered').toggleClass('btn-outline-primary btn-primary answered')
+    uploadAllAnswers();
+    worker();
 });
 
 $('.answer').click(function () {
     const user_id = new URL(window.location.href).searchParams.get('u');
     const match = this.id.match(/q(\d+)-a(\d+)/);
-    let other = $('.answer').filter(function () {
+    let other = $('.answered').filter(function () {
         return this.id !== '' && this.id.startsWith('q' + match[1])
     });
-    other.removeClass('btn-primary');
+    other.removeClass('btn-primary answered');
     other.addClass('btn-outline-primary');
-    $(this).toggleClass('btn-outline-primary btn-primary');
 
-    if (!uploadAnswer(match[2])) {
-        localStorage.setItem(`u${user_id}-q${match[1]}`, match[2]);
-    }
+    uploadAnswer(match[2], user_id, match[1]);
+    $(this).addClass('answered') // Don't confuse user when there is no connection
 });
 
 $('#finish-test').submit(function () {
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const match = key.match(/u(\d+)-q\d+/);
-        const value = localStorage.getItem(key);
-        if (uploadAnswer(value, match[1])) {
-            localStorage.removeItem(key);
-        }
-    }
+    uploadAllAnswers()
 });
