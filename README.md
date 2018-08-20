@@ -15,3 +15,5 @@
 It's recommended to run this with [`uwsgi`](https://google.com/search?q=uwsgi+flask).
 
 - Admin login: `admin`
+- Supported browsers:
+All latest Chromium-based browsers (Chrome, Opera, Yandex.Browser, Amigo, ...) and Firefox

@@ -63,6 +63,19 @@
                 </div>
             </div>
         </div>
+        {% if not g.supported %}
+            <div id="unsupported-browser" class="row">
+                <div class="col">
+                    <div class="alert alert-warning" role="alert">
+                        Для правильной работы сайта используйте браузер
+                        <a href="//google.com/chrome" class="alert-link">Chrome</a>,
+                        <a href="//mozilla.org/download" class="alert-link">Firefox</a>,
+                        <a href="//opera.com/download" class="alert-link">Opera</a> или
+                        <a href="//browser.yandex.ru/" class="alert-link">Яндекс.Браузер</a> последней версии
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
     {% block content %}{% endblock %}
 </div>

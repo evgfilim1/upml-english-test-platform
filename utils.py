@@ -13,6 +13,12 @@ def get_user(user_id):
     return User.query.get(user_id)
 
 
+def is_browser_supported():
+    ua = request.user_agent
+    v = tuple(map(int, ua.version.split('.')))[:2]
+    return ua.browser in ('chrome', 'firefox') and v >= (60, 0)
+
+
 def save_answer(answer_id, user_id=None):
     if user_id is None:
         user = g.user

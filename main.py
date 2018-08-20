@@ -7,7 +7,7 @@ from secrets import randbelow
 from app import app
 from forms import LoginForm, AddUsersForm, AddAdminForm, AddQuestionForm, ImportQuestionsForm
 from models import Question, db, UserAnswer, User, Answer
-from utils import find_user, get_user, login_required, admin_required, back
+from utils import find_user, get_user, login_required, admin_required, back, is_browser_supported
 from api import SaveAnswer, ChangeQuestionData
 import json
 
@@ -19,6 +19,7 @@ api.add_resource(ChangeQuestionData, '/api/admin/question')
 @app.before_request
 def before_request():
     g.md = markdown
+    g.supported = is_browser_supported()
     u = session.get('user_id')
     if u is not None:
         g.user = get_user(u)
