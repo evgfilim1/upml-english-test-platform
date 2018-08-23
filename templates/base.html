@@ -27,6 +27,8 @@
             {% block navbar %}{% endblock %}
             {% if g.user %}
                 <a href="{{ url_for('logout') }}" class="btn btn-danger">Выйти</a>
+            {% else %}
+                <p class="navbar-text d-md-none">Надо было пойти учиться на гуманитария...</p>
             {% endif %}
         </div>
         <div>
