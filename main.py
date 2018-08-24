@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session, g, request, flash, abort
+from flask import render_template, redirect, url_for, session, g, request, flash, abort, Response
 from flask_restful import Api
 from markdown import markdown
 from datetime import datetime, timedelta
@@ -265,8 +265,8 @@ def upload_questions():
         with form.file.data.stream as ff:
             x = json.load(ff)
         for question in x:
-            q = Question(id=question['num'], title=question['statement'], text=question['extra'],
-                         points=question['points'], number=question['num'] * 10)
+            q = Question(id=question['num'], title=question['statement'], points=question['points'],
+                         text=question['extra'] or None, number=question['num'] * 10)
             for i, answer in enumerate(question['choices']):
                 a = Answer(text=answer, is_correct=(i == question['correct']),
                            question_id=question['num'])
@@ -274,6 +274,9 @@ def upload_questions():
             db.session.add(q)
         db.session.commit()
         flash('Успешно импортировано!', 'success')
+    else:
+        for err in form.file.errors:
+            flash(err)
     return redirect(url_for('manage_questions'))
 
 
@@ -288,6 +291,24 @@ def delete_question(question_id):
     db.session.commit()
     flash('Вопрос удалён!', 'success')
     return redirect(back('manage_questions'))
+
+
+@app.route('/admin/questions/export')
+@admin_required
+def export_questions():
+    questions = Question.query.all()
+    data = []
+    for q in questions:
+        d = {'num': q.id, 'statement': q.title, 'extra': q.text or '', 'choices': [],
+             'points': q.points}
+        for i, a in enumerate(q.answers):
+            d['choices'].append(a.text)
+            if a.is_correct:
+                d['correct'] = i
+        data.append(d)
+    json_data = json.dumps(data, indent=4)
+    return Response(response=json_data, mimetype='application/json',
+                    headers={'Content-Disposition': 'attachment; filename="tasks.json"'})
 
 
 if __name__ == '__main__':

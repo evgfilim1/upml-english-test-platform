@@ -33,6 +33,13 @@ function uploadAllAnswers() {
     }
 }
 
+function destructive_confirm(ev) {
+    if (!confirm('Это — деструктивная операция. Продолжить?')) {
+        ev.preventDefault();
+        ev.stopPropagation();
+    }
+}
+
 $('textarea').on('input', function (){
     $(this).height(0).height(this.scrollHeight);
 });
@@ -41,11 +48,7 @@ $(document).ready(function () {
     $('textarea').trigger('input');
 });
 
-$('.destructive-confirm').click(function (ev) {
-    if (!confirm('Это — деструктивная операция. Продолжить?')) {
-        ev.preventDefault();
-        ev.stopPropagation();
-    }
-});
+$('a.destructive-confirm').click(destructive_confirm);
+$('form.destructive-confirm').submit(destructive_confirm);
 
 $('#noscript').hide();

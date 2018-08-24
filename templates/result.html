@@ -6,7 +6,7 @@
     {% else %}
         <h1>Поздравляю!</h1>
     {% endif %}
-    <p class="mb4">
+    <p class="bottom-space">
         {% if admin %}
             Набрано баллов:
         {% else %}
@@ -27,7 +27,7 @@
         {% for q in failed %}
             {% include 'card.html' %}
         {% else %}
-            <p class="mb4"><i>Отсутствуют</i></p>
+            <p class="bottom-space"><i>Отсутствуют</i></p>
         {% endfor %}
     </div>
     <h2 class="pre-question-card">Пропущенные вопросы</h2>
@@ -35,7 +35,7 @@
         {% for q in skipped %}
             {% include 'card.html' %}
         {% else %}
-            <p class="mb4"><i>Отсутствуют</i></p>
+            <p class="bottom-space"><i>Отсутствуют</i></p>
         {% endfor %}
     </div>
 {% endblock %}
