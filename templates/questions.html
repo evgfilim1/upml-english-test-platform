@@ -1,19 +1,32 @@
 {% extends 'admin_base.html' %}
 {% block content %}
-    <h1>Вопросы</h1>
+    <h1 id="questions">Вопросы</h1>
+    <p>
+        <a href="#export" class="btn btn-secondary btn-sm btn-block js-scroll">
+            &downarrow; Пропустить список вопросов
+        </a>
+    </p>
     <p><i>Нажмите на вариант ответа, чтобы пометить его правильным</i></p>
     {% for q in questions %}
         {% include 'card.html' %}
     {% endfor %}
-    <h2>Экспортировать вопросы</h2>
     <p class="bottom-space">
-        <a href="{{ url_for('export_questions') }}" class="btn btn-primary">Скачать файл с вопросами в формате JSON</a>
+        <a href="#questions" class="btn btn-secondary btn-sm btn-block js-scroll">
+            &uparrow; В начало
+        </a>
+    </p>
+    <h2 id="export">Экспортировать вопросы</h2>
+    <p class="bottom-space">
+        <a href="{{ url_for('export_questions') }}" class="btn btn-primary">
+            Скачать файл с вопросами в формате JSON
+        </a>
     </p>
     <h2>Добавить вопрос</h2>
     {% include 'question_form.html' %}
     <h2>Импортировать вопросы</h2>
     <p class="text-danger"><b>После импорта все вопросы, ответы и решения будут сброшены!</b></p>
-    <form action="{{ url_for('upload_questions') }}" enctype="multipart/form-data" method="post" class="destructive-confirm">
+    <form action="{{ url_for('upload_questions') }}" enctype="multipart/form-data" method="post"
+          class="destructive-confirm">
         {{ import_form.hidden_tag() }}
         <div class="custom-file">
             {{ import_form.file(class='custom-file-input' + (' is-invalid' if import_form.file.errors else ''), accept='application/json') }}
