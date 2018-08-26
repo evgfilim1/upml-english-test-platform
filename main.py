@@ -1,19 +1,12 @@
-from flask import render_template, redirect, url_for, session, g, request, flash, abort, Response
-from flask_restful import Api
+from flask import render_template, redirect, url_for, session, g, request, flash
 from markdown import markdown
 from datetime import datetime, timedelta
 from random import shuffle
-from secrets import randbelow
 from app import app
-from forms import LoginForm, AddUsersForm, AddAdminForm, AddQuestionForm, ImportQuestionsForm
-from models import Question, db, UserAnswer, User, Answer
-from utils import find_user, get_user, login_required, admin_required, back, is_browser_supported
-from api import SaveAnswer, ChangeQuestionData
-import json
-
-api = Api(app)
-api.add_resource(SaveAnswer, '/api/answer')
-api.add_resource(ChangeQuestionData, '/api/admin/question')
+from endpoints import admin, api
+from forms import LoginForm
+from models import Question, db, UserAnswer
+from utils import find_user, get_user, login_required, back, is_browser_supported
 
 
 @app.before_request
@@ -50,7 +43,7 @@ def logout():
 @login_required
 def pre_solve():
     if g.user.is_admin:
-        return redirect(url_for('admin'))
+        return redirect(url_for('admin_panel'))
     if g.user.end_time:
         return redirect(url_for('result'))
     if g.user.start_time:
@@ -88,7 +81,7 @@ def result(user_id=None):
         user = get_user(user_id)
         if not user:
             flash(f'Пользователь с id={user_id} не найден')
-            return redirect(back('admin'))
+            return redirect(back('admin_panel'))
     if request.method == 'POST':
         flash('Тест завершён!', category='success')
         if user.end_time is None:
@@ -102,7 +95,7 @@ def result(user_id=None):
     if g.user.end_time is None:
         # flash('Тест ещё не был завершён!')
         if user_id is not None:
-            return redirect(back('admin'))
+            return redirect(back('admin_panel'))
         return redirect(url_for('pre_solve'))
     total = 0
     for q in Question.query.all():
@@ -117,204 +110,21 @@ def result(user_id=None):
                            title='Результат тестирования')
 
 
-@app.route('/admin/')
-@admin_required
-def admin():
-    user_list = sorted(User.query.all(), key=lambda x: x.points or 0, reverse=True)
-    return render_template('admin.html', users=user_list, title='Панель администратора')
+app.add_url_rule('/api/answer', view_func=api.save_answer, methods=['POST'])
+app.add_url_rule('/api/admin/question', view_func=api.change_question_data, methods=['POST'])
 
-
-@app.route('/admin/users/add', methods=['GET', 'POST'])
-@admin_required
-def add_users():
-    form = AddUsersForm()
-    admin_form = AddAdminForm()
-    users = {}
-    if form.validate_on_submit():
-        for name in form.users.data.split('\n'):
-            name = name.strip()
-            if name == '':
-                continue
-            if find_user(name) is not None:
-                flash(f'Пользователь "{name}" уже существует, пропускаем.', 'warning')
-                continue
-            user = User(name=name)
-            password = str(randbelow(9000) + 1000)
-            user.set_password(password)
-            users[user] = password
-            db.session.add(user)
-        db.session.commit()
-        form.users.data = ''
-    return render_template('add_users.html', new_users=users, form=form,
-                           title='Добавить пользователей', admin_form=admin_form)
-
-
-@app.route('/admin/users/addAdmin', methods=['POST'])
-@admin_required
-def add_admin():
-    form = AddAdminForm()
-    if form.validate_on_submit():
-        user = User(name=form.login.data, is_admin=True)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('Администратор добавлен!', 'success')
-    return redirect(url_for('add_users'))
-
-
-@app.route('/admin/users/manage')
-@app.route('/admin/users/')
-@admin_required
-def manage_users():
-    return render_template('manage_users.html', users=User.query.all(),
-                           title='Управление пользователями')
-
-
-@app.route('/admin/reset/<int:user_id>')
-@admin_required
-def reset(user_id):
-    u = User.query.get(user_id)
-    full = request.args.get('full', False)
-    if not u:
-        flash(f'Пользователь с id={user_id} не найден')
-        return redirect(back('admin'))
-    u.points = None
-    u.start_time = None
-    u.end_time = None
-    if full:
-        UserAnswer.query.filter(UserAnswer.user_id == u.id).delete()
-    db.session.commit()
-    if full:
-        flash('Результаты сброшены!', 'success')
-    else:
-        flash('Таймер сброшен!', 'success')
-    return redirect(back('admin'))
-
-
-@app.route('/admin/users/delete/<int:user_id>')
-@admin_required
-def delete_user(user_id):
-    u = User.query.get(user_id)
-    if not u:
-        flash(f'Пользователь с id={user_id} не найден')
-        return redirect(back('manage_users'))
-    db.session.delete(u)
-    db.session.commit()
-    flash('Пользователь удалён!', 'success')
-    return redirect(back('manage_users'))
-
-
-@app.route('/admin/questions/', methods=['GET', 'POST'])
-@admin_required
-def manage_questions():
-    form = AddQuestionForm()
-    import_form = ImportQuestionsForm()
-    if form.validate_on_submit():
-        q = Question(title=form.question.data, text=form.caption.data, points=form.points.data,
-                     number=form.number.data)
-        db.session.add(q)
-        db.session.commit()
-        for answer in form.answers.data.split('\n'):
-            a = Answer(question_id=q.id)
-            if answer.startswith('+'):
-                answer = answer.replace('+', '', 1).lstrip()
-                a.is_correct = True
-            a.text = answer
-            db.session.add(a)
-        db.session.commit()
-        return redirect(url_for('manage_questions'))
-    q = Question.query.order_by(Question.number).all()
-    if not q:
-        form.number.data = 0
-    else:
-        form.number.data = q[-1].number + 10
-    form.points.data = 1
-    return render_template('questions.html', form=form, questions=Question.query.all(),
-                           show_correct=True, editable=True, import_form=import_form)
-
-
-@app.route('/admin/questions/<int:question_id>', methods=['GET', 'POST'])
-@admin_required
-def edit_question(question_id):
-    q = Question.query.get(question_id)
-    if q is None:
-        flash(f'Вопроса с id={question_id} не существует')
-        return redirect(back('manage_questions'))
-    form = AddQuestionForm()
-    if form.validate_on_submit():
-        q.title = form.question.data
-        q.text = form.caption.data
-        q.points = form.points.data
-        q.number = form.number.data
-        db.session.commit()
-        flash('Вопрос отредактирован', 'success')
-        return redirect(url_for('manage_questions'))
-    form.question.data = q.title
-    form.caption.data = q.text
-    form.points.data = q.points
-    form.answers.data = '+Unsupported...'
-    form.number.data = q.number
-    return render_template('edit_question.html', form=form)
-
-
-@app.route('/admin/questions/import', methods=['POST'])
-@admin_required
-def upload_questions():
-    form = ImportQuestionsForm()
-    if form.validate_on_submit():
-        Question.query.delete(synchronize_session='fetch')
-        Answer.query.delete(synchronize_session='fetch')
-        UserAnswer.query.delete(synchronize_session='fetch')
-        User.query.update({User.points: None, User.start_time: None, User.end_time: None},
-                          synchronize_session='fetch')
-        db.session.commit()
-        with form.file.data.stream as ff:
-            x = json.load(ff)
-        for question in x:
-            q = Question(id=question['num'], title=question['statement'], points=question['points'],
-                         text=question['extra'] or None, number=question['num'] * 10)
-            for i, answer in enumerate(question['choices']):
-                a = Answer(text=answer, is_correct=(i == question['correct']),
-                           question_id=question['num'])
-                db.session.add(a)
-            db.session.add(q)
-        db.session.commit()
-        flash('Успешно импортировано!', 'success')
-    else:
-        for err in form.file.errors:
-            flash(err)
-    return redirect(url_for('manage_questions'))
-
-
-@app.route('/admin/questions/delete/<int:question_id>')
-@admin_required
-def delete_question(question_id):
-    q = Question.query.get(question_id)
-    if not q:
-        flash(f'Вопроса с id={question_id} не существует')
-        return redirect(back('manage_questions'))
-    db.session.delete(q)
-    db.session.commit()
-    flash('Вопрос удалён!', 'success')
-    return redirect(back('manage_questions'))
-
-
-@app.route('/admin/questions/export')
-@admin_required
-def export_questions():
-    questions = Question.query.all()
-    data = []
-    for q in questions:
-        d = {'num': q.id, 'statement': q.title, 'extra': q.text or '', 'choices': [],
-             'points': q.points}
-        for i, a in enumerate(q.answers):
-            d['choices'].append(a.text)
-            if a.is_correct:
-                d['correct'] = i
-        data.append(d)
-    json_data = json.dumps(data, indent=4)
-    return Response(response=json_data, mimetype='application/json',
-                    headers={'Content-Disposition': 'attachment; filename="tasks.json"'})
+app.add_url_rule('/admin/', view_func=admin.admin_panel)
+app.add_url_rule('/admin/users/', view_func=admin.manage_users)
+app.add_url_rule('/admin/users/add', view_func=admin.add_users, methods=['GET', 'POST'])
+app.add_url_rule('/admin/users/addAdmin', view_func=admin.add_admin, methods=['POST'])
+app.add_url_rule('/admin/users/delete/<int:user_id>', view_func=admin.delete_user)
+app.add_url_rule('/admin/reset/<int:user_id>', view_func=admin.reset)
+app.add_url_rule('/admin/questions/', view_func=admin.manage_questions, methods=['GET', 'POST'])
+app.add_url_rule('/admin/questions/<int:question_id>', view_func=admin.edit_question,
+                 methods=['GET', 'POST'])
+app.add_url_rule('/admin/questions/import', view_func=admin.upload_questions, methods=['POST'])
+app.add_url_rule('/admin/questions/export', view_func=admin.export_questions)
+app.add_url_rule('/admin/questions/delete/<int:question_id>', view_func=admin.delete_question)
 
 
 if __name__ == '__main__':

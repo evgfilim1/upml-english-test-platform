@@ -49,8 +49,14 @@ def back(default='welcome'):
     return request.referrer or url_for(default)
 
 
-def error(json, status=400):
-    return Response(response=dumps(json), status=status, mimetype='application/json')
+def response(data, status=200, mimetype=None, **kwargs):
+    return Response(response=data, status=status, mimetype=mimetype, **kwargs)
+
+
+def json_response(data, status=200, **kwargs):
+    if not isinstance(data, str):
+        data = dumps(data)
+    return response(data, status, 'application/json', **kwargs)
 
 
 def login_required(fn):
