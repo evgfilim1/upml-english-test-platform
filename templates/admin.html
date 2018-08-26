@@ -20,10 +20,21 @@
                 <div class="d-inline">
                     <div class="d-inline badge badge-primary badge-pill">{{ user.points }}</div>
                     <object>
-                        <a class="btn btn-sm btn-danger destructive-confirm"
-                           href="{{ url_for('reset', user_id=user.id) }}">
-                            Сбросить результат
-                        </a>
+                        <div class="dropdown d-inline">
+                            <button class="btn btn-outline-danger btn-sm dropdown-toggle" type="button"
+                                    id="manage-u{{ user.id }}" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                Управление
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="manage-u{{ user.id }}">
+                                <a class="dropdown-item" href="{{ url_for('reset', user_id=user.id) }}">
+                                    Сбросить таймер
+                                </a>
+                                <a class="dropdown-item" href="{{ url_for('reset', user_id=user.id, full=1) }}">
+                                    Сбросить результат
+                                </a>
+                            </div>
+                        </div>
                     </object>
                 </div>
             </a>

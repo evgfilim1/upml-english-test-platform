@@ -100,7 +100,7 @@ def result(user_id=None):
             db.session.commit()
         return redirect(url_for('result'))
     if g.user.end_time is None:
-        flash('Тест ещё не был завершён!')
+        # flash('Тест ещё не был завершён!')
         if user_id is not None:
             return redirect(back('admin'))
         return redirect(url_for('pre_solve'))
@@ -174,14 +174,20 @@ def manage_users():
 @admin_required
 def reset(user_id):
     u = User.query.get(user_id)
+    full = request.args.get('full', False)
     if not u:
         flash(f'Пользователь с id={user_id} не найден')
         return redirect(back('admin'))
     u.points = None
     u.start_time = None
     u.end_time = None
+    if full:
+        UserAnswer.query.filter(UserAnswer.user_id == u.id).delete()
     db.session.commit()
-    flash('Результаты сброшены!', 'success')
+    if full:
+        flash('Результаты сброшены!', 'success')
+    else:
+        flash('Таймер сброшен!', 'success')
     return redirect(back('admin'))
 
 
