@@ -51,22 +51,9 @@ p.pre-solve {
     padding-bottom: 0.75rem;
 }
 
-#fullscreen {
-    width: 100%;
-    height: auto;
-    bottom: 0;
-    top: 0;
-    left: 0;
-    position: absolute;
-}
-
-#fullscreen-content {
-    position: relative;
-    float: left;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+#centered-container {
+    /*width: 100vw;*/
+    height: 100vh;
 }
 
 #remaining-text {
