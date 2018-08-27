@@ -4,6 +4,10 @@
     margin-bottom: 4rem;
 }
 
+.bottom-space-sm {
+    margin-bottom: 2rem;
+}
+
 .points {
     font-weight: bold;
 }

@@ -3,7 +3,7 @@
     <h1 class="d-print-none">Пользователи</h1>
     <h2 class="d-print-none">Недавно добавленные</h2>
     {% if new_users %}
-        <table class="table table-bordered to-print">
+        <table class="table table-bordered to-print bottom-space">
             {% for user, password in new_users.items() %}
                 <tr>
                     <td class="col-4">{{ user.name }}</td>
@@ -15,10 +15,10 @@
         <p><b>При обновлении страницы данные будут утеряны!</b></p>
         <button class="btn btn-link d-print-none" id="print">Напечатать список</button>
     {% else %}
-        <p><i>Пусто</i></p>
+        <p class="bottom-space"><i>Пусто</i></p>
     {% endif %}
     <h2 class="d-print-none">Добавить пользователей</h2>
-    <form method="post" class="d-print-none">
+    <form method="post" class="d-print-none bottom-space">
         {{ form.hidden_tag() }}
         <div class="form-group">
             {{ form.users.label() }}
