@@ -1,4 +1,7 @@
 {# TODO: nice and interactive edit #}
+{% if user is undefined %}
+    {% set user = g.user %}
+{% endif %}
 <div class="question-card">
     {% if editable %}
         <i class="float-right">({{ q.points }} point{% if q.points != 1 %}s{% endif %})</i>
@@ -15,7 +18,7 @@
     <div class="answers">
         {# TODO: shuffle answers #}
         {% for ans in q.answers %}
-            <button class="btn btn-outline-primary w-100 answer {{ 'answered' if ans in g.user.answers else '' }} {{ 'correct' if show_correct and ans.is_correct else '' }}"
+            <button class="btn btn-outline-primary w-100 answer {{ 'answered' if ans in user.answers else '' }} {{ 'correct' if show_correct and ans.is_correct else '' }}"
                     id="q{{ q.id }}-a{{ ans.id }}">{{ ans.text }}</button>
         {% endfor %}
     </div>

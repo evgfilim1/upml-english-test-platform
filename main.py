@@ -92,15 +92,16 @@ def result(user_id=None):
                     g.user.points += a.question.points
             db.session.commit()
         return redirect(url_for('result'))
-    if g.user.end_time is None:
-        # flash('Тест ещё не был завершён!')
+    if user.end_time is None:
+        # testctf_flag2_commit_diff
         if user_id is not None:
+            flash('Тест ещё не был завершён!')
             return redirect(back('admin_panel'))
         return redirect(url_for('pre_solve'))
     total = 0
     for q in Question.query.all():
         total += q.points
-    user_answers = UserAnswer.query.filter_by(user_id=g.user.id).all()
+    user_answers = UserAnswer.query.filter_by(user_id=user.id).all()
     failed_questions = [a.question for a in user_answers if not a.answer.is_correct]
     skipped_questions = Question.query.filter(
         ~Question.id.in_([a.question_id for a in user_answers])
