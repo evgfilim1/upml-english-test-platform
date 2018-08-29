@@ -3,8 +3,8 @@
 {% endif %}
 {% set answers_list = q.answers|list %}
 <div class="question-card" id="q{{ q.id }}" data-correct-id="{{ g.rand(0, answers_list|length - 1) }}">
+    <i class="float-right">({{ q.points }} point{% if q.points != 1 %}s{% endif %})</i>
     {% if editable %}
-        <i class="float-right">({{ q.points }} point{% if q.points != 1 %}s{% endif %})</i>
         <b class="float-left">#{{ q.id }}:</b>
     {% endif %}
     {{ g.md(q.title)|safe }}
