@@ -20,16 +20,19 @@
                     <div class="d-inline badge badge-primary badge-pill">{{ user.points }}</div>
                     <object>
                         <div class="dropdown d-inline">
-                            <button class="btn btn-outline-danger btn-sm dropdown-toggle" type="button"
+                            <button class="btn btn-outline-danger btn-sm dropdown-toggle"
+                                    type="button"
                                     id="manage-u{{ user.id }}" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
                                 Управление
                             </button>
                             <div class="dropdown-menu" aria-labelledby="manage-u{{ user.id }}">
-                                <a class="dropdown-item" href="{{ url_for('reset', user_id=user.id) }}">
+                                <a class="dropdown-item"
+                                   href="{{ url_for('reset', user_id=user.id) }}">
                                     Сбросить таймер
                                 </a>
-                                <a class="dropdown-item" href="{{ url_for('reset', user_id=user.id, full=1) }}">
+                                <a class="dropdown-item"
+                                   href="{{ url_for('reset', user_id=user.id, full=1) }}">
                                     Сбросить результат
                                 </a>
                             </div>
@@ -44,12 +47,28 @@
     <h2>Решают</h2>
     <ul class="list-group bottom-space-sm">
         {% for user in users if user.start_time and not user.end_time %}
-            <li class="list-group-item {{ 'is-admin' if user.is_admin else '' }}">
+            <li class="list-group-item d-flex align-items-center justify-content-between {{ 'is-admin' if user.is_admin else '' }}">
                 <div>
                     {{ user.name }}
                     {% if user.is_admin %}
                         <span class="badge badge-pill badge-warning ml-2">admin</span>
                     {% endif %}
+                </div>
+                <div class="dropdown d-inline">
+                    <button class="btn btn-outline-danger btn-sm dropdown-toggle" type="button"
+                            id="manage-u{{ user.id }}" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        Управление
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="manage-u{{ user.id }}">
+                        <a class="dropdown-item" href="{{ url_for('reset', user_id=user.id) }}">
+                            Сбросить таймер
+                        </a>
+                        <a class="dropdown-item"
+                           href="{{ url_for('reset', user_id=user.id, full=1) }}">
+                            Сбросить результат
+                        </a>
+                    </div>
                 </div>
             </li>
         {% else %}
