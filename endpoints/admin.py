@@ -116,7 +116,8 @@ def manage_questions():
         form.number.data = q[-1].number + 10
     form.points.data = 1
     return render_template('questions.html', form=form, questions=Question.query.all(),
-                           show_correct=True, editable=True, import_form=import_form)
+                           show_correct=True, editable=True, import_form=import_form,
+                           shuffle=(lambda x: x))
 
 
 @admin_required

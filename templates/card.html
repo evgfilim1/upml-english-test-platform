@@ -17,7 +17,7 @@
             вопрос</a></p>
     {% endif %}
     <div class="answers">
-        {% for ans in answers_list %}
+        {% for ans in shuffle(answers_list) %}
             <button class="btn btn-outline-primary w-100 answer {{ 'answered' if ans in user.answers else '' }} {{ 'correct' if show_correct and ans.is_correct else '' }}"
                     id="q{{ q.id }}-a{{ ans.id }}">
                 {{ ans.text }}

@@ -1,13 +1,13 @@
 from flask import render_template, redirect, url_for, session, g, request, flash
 from markdown import markdown
 from datetime import datetime
-from random import shuffle, randint
+from random import randint
 from app import app
 from endpoints import admin, api
 from forms import LoginForm
 from models import Question, db, UserAnswer
 from utils import (find_user, get_user, login_required, back, is_browser_supported, remaining_time,
-                   finish_test)
+                   finish_test, shuffle_return as shuffle)
 
 
 @app.before_request

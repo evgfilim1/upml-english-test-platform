@@ -1,9 +1,15 @@
 from flask import g, Response, redirect, url_for, flash, request
 from functools import wraps
 from json import dumps
+from random import shuffle
 from datetime import datetime, timedelta
 from app import app
 from models import User, Answer, UserAnswer, db
+
+
+def shuffle_return(x):
+    shuffle(x)
+    return x
 
 
 def find_user(name):
