@@ -5,8 +5,7 @@ from utils import json_response, save_answer as _save_answer
 
 def save_answer():
     answer_id = request.form.get('a')
-    user_id = request.form.get('u', None)
-    result = _save_answer(answer_id, user_id)
+    result = _save_answer(answer_id)
     success = False
     if result is True:
         success = True

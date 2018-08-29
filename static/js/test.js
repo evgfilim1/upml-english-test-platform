@@ -1,18 +1,17 @@
 let remaining = 0;
 
-function uploadAnswer(answer_id, user_id, question_id) {
+function uploadAnswer(answer_id, question_id) {
     /**
-     * Upload answer with id=answer_id as user with id=user_id and mark it as answered (UI).
+     * Upload answer with id=answer_id and mark it as answered (UI).
      * If the uploading fails, save the answer to upload later.
      */
-    let data = {'a': answer_id, 'u': user_id};
     $.post({
         url: '/api/answer',
-        'data': data,
+        data: {'a': answer_id},
         success: function () {
             console.debug(`Uploaded answer (id=${answer_id})`);
             $(`#q${question_id}-a${answer_id}`).addClass('answered');
-            localStorage.removeItem(`u${user_id}-q${question_id}`);
+            localStorage.removeItem(`q${question_id}`);
         },
         error: function (jqxhr) {
             if (jqxhr.status === 400 && jqxhr.responseJSON !== undefined) {
@@ -30,7 +29,7 @@ function uploadAnswer(answer_id, user_id, question_id) {
             console.warn(
                 `Failed to upload answer (id=${answer_id}): ${jqxhr.status} ${jqxhr.statusText}`
             );
-            localStorage.setItem(`u${user_id}-q${question_id}`, answer_id);
+            localStorage.setItem(`q${question_id}`, answer_id);
         }
     });
 }
@@ -43,9 +42,9 @@ function uploadAllAnswers() {
     }
     for (let i in keys) {
         const key = keys[i];
-        const match = key.match(/u(\d+)-q(\d+)/);
+        const match = key.match(/q(\d+)/);
         const value = localStorage.getItem(key);
-        uploadAnswer(value, match[1], match[2]);
+        uploadAnswer(value, match[1]);
     }
 }
 
@@ -90,7 +89,6 @@ $('.answer').click(function () {
     if ($(this).hasClass('answered')) {
         return // Don't resend the same answer
     }
-    const user_id = new URL(window.location.href).searchParams.get('u');
     const match = this.id.match(/q(\d+)-a(\d+)/);
     let other = $('.answered').filter(function () {
         return this.id !== '' && this.id.startsWith('q' + match[1])
@@ -98,6 +96,6 @@ $('.answer').click(function () {
     other.removeClass('btn-primary answered');
     other.addClass('btn-outline-primary');
 
-    uploadAnswer(match[2], user_id, match[1]);
+    uploadAnswer(match[2], match[1]);
     $(this).addClass('answered') // Don't confuse user when there is no connection
 });

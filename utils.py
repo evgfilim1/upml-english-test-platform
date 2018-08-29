@@ -38,12 +38,11 @@ def finish_test(user):
         db.session.commit()
 
 
-def save_answer(answer_id, user_id=None):
-    if user_id is None:
-        user = g.user
-    else:
-        user = get_user(user_id)
-    if answer_id is None or user is None:
+def save_answer(answer_id):
+    user = g.user
+    if user is None:
+        return 'Not logged in', 4
+    if answer_id is None:
         return 'Not found', 2
     if user.end_time is not None:
         return 'Test finished', 1
