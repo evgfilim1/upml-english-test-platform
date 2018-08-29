@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, session, g, request, flash
 from markdown import markdown
 from datetime import datetime
-from random import shuffle
+from random import shuffle, randint
 from app import app
 from endpoints import admin, api
 from forms import LoginForm
@@ -14,6 +14,7 @@ from utils import (find_user, get_user, login_required, back, is_browser_support
 def before_request():
     g.md = markdown
     g.supported = is_browser_supported()
+    g.rand = randint
     u = session.get('user_id')
     if u is not None:
         g.user = get_user(u)
