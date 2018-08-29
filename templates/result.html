@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
     {% set admin = user.id != g.user.id %}
+    {% set solve_seconds = (user.end_time - user.start_time).total_seconds()|int % 60 %}
+    {% set solve_minutes = (user.end_time - user.start_time).total_seconds()|int // 60 %}
     {% if admin %}
         <h1>Результаты пользователя {{ user.name }}</h1>
     {% else %}
         <h1>Поздравляю!</h1>
     {% endif %}
-    <p class="bottom-space">
+    <p>
         {% if admin %}
             Набрано баллов:
         {% else %}
@@ -15,6 +17,29 @@
         <span class="points">{{ user.points }}</span>
         из
         <span class="points">{{ total }}</span>
+    </p>
+    <p class="bottom-space">
+        {% if admin %}
+            Пользователь
+        {% else %}
+            Ты
+        {% endif %}
+        решал тест в течение
+        <i>
+            {{ solve_minutes }}
+            {% if solve_minutes % 10 == 1 and solve_minutes % 100 == 11 %}
+                минуты
+            {% else %}
+                минут
+            {% endif %}
+            {{ solve_seconds % 60 }}
+            {% if solve_seconds % 10 == 1 and solve_seconds != 11 %}
+                секунды
+            {% else %}
+                секунд
+            {% endif %}
+        </i>
+        ({{ user.start_time.replace(microsecond=0) }} — {{ user.end_time.replace(microsecond=0) }})
     </p>
     <h2 class="pre-question-card">
         {% if admin %}
