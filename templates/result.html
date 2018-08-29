@@ -18,7 +18,7 @@
         из
         <span class="points">{{ total }}</span>
     </p>
-    <p class="bottom-space">
+    <p>
         {% if admin %}
             Пользователь
         {% else %}
@@ -41,6 +41,9 @@
         </i>
         ({{ user.start_time.replace(microsecond=0) }} — {{ user.end_time.replace(microsecond=0) }})
     </p>
+    {% if not admin %}
+        <p class="bottom-space"><b>Не забудь выйти из аккаунта!</b></p>
+    {% endif %}
     <h2 class="pre-question-card">
         {% if admin %}
             Ошибки
@@ -63,6 +66,7 @@
             <p class="bottom-space"><i>Отсутствуют</i></p>
         {% endfor %}
     </div>
+    <p><b>Не забудь выйти из аккаунта!</b></p>
 {% endblock %}
 {% block scripts %}
     <script src="/static/js/result.js"></script>
