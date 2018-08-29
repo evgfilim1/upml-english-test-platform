@@ -58,8 +58,6 @@ def pre_solve():
 def solve():
     if g.user.end_time:
         return redirect(url_for('result'))
-    if str(g.user.id) != request.args.get('u'):
-        return redirect(url_for('solve', u=g.user.id))
     if g.user.start_time is None:
         g.user.start_time = datetime.utcnow()
         db.session.commit()
