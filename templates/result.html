@@ -27,7 +27,7 @@
         решал тест в течение
         <i>
             {{ solve_minutes }}
-            {% if solve_minutes % 10 == 1 and solve_minutes % 100 == 11 %}
+            {% if solve_minutes % 10 == 1 and solve_minutes % 100 != 11 %}
                 минуты
             {% else %}
                 минут
