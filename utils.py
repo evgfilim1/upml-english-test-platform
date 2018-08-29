@@ -1,6 +1,6 @@
 from flask import g, Response, redirect, url_for, flash, request
-from json import dumps
 from functools import wraps
+from json import dumps
 from datetime import datetime, timedelta
 from app import app
 from models import User, Answer, UserAnswer, db
@@ -30,7 +30,11 @@ def remaining_time(user):
 
 def finish_test(user):
     if user.end_time is None:
-        user.end_time = datetime.utcnow()
+        if remaining_time(user) <= 0:
+            time_to_solve = app.config.get('TIME_TO_SOLVE', 3600)
+            user.end_time = user.start_time + timedelta(seconds=time_to_solve)
+        else:
+            user.end_time = datetime.utcnow()
         user.points = 0
         for a in user.answers:
             if a.is_correct:
