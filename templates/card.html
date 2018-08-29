@@ -1,4 +1,3 @@
-{# TODO: nice and interactive edit #}
 {% if user is undefined %}
     {% set user = g.user %}
 {% endif %}
@@ -16,7 +15,6 @@
         <p><a class="destructive-confirm" href="{{ url_for('delete_question', question_id=q.id) }}">Удалить вопрос</a></p>
     {% endif %}
     <div class="answers">
-        {# TODO: shuffle answers #}
         {% for ans in q.answers %}
             <button class="btn btn-outline-primary w-100 answer {{ 'answered' if ans in user.answers else '' }} {{ 'correct' if show_correct and ans.is_correct else '' }}"
                     id="q{{ q.id }}-a{{ ans.id }}">{{ ans.text }}</button>
