@@ -14,8 +14,22 @@ function uploadAnswer(answer_id, user_id, question_id) {
             $(`#q${question_id}-a${answer_id}`).addClass('answered');
             localStorage.removeItem(`u${user_id}-q${question_id}`);
         },
-        error: function () {
-            console.warn(`Failed to upload answer (id=${answer_id})`);
+        error: function (jqxhr) {
+            if (jqxhr.status === 400 && jqxhr.responseJSON !== undefined) {
+                const r = jqxhr.responseJSON;
+                if (r.ok === false && 1 <= r.error_code && r.error_code <= 3) {
+                    console.warn(`Failed to upload answer (id=${answer_id}): ${r.error}`);
+                    if (r.error_code === 1) {
+                        location.reload(true);
+                    } else if (r.error_code === 3) {
+                        $('#finish-test').submit();
+                    }
+                    return;
+                }
+            }
+            console.warn(
+                `Failed to upload answer (id=${answer_id}): ${jqxhr.status} ${jqxhr.statusText}`
+            );
             localStorage.setItem(`u${user_id}-q${question_id}`, answer_id);
         }
     });

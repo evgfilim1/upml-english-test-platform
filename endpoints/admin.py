@@ -3,12 +3,17 @@ from flask import render_template, flash, redirect, url_for, request
 from secrets import randbelow
 from forms import AddQuestionForm, AddAdminForm, AddUsersForm, ImportQuestionsForm
 from models import db, User, UserAnswer, Question, Answer
-from utils import admin_required, find_user, back, json_response
+from utils import admin_required, find_user, back, json_response, remaining_time, finish_test
 
 
 @admin_required
 def admin_panel():
-    user_list = sorted(User.query.all(), key=lambda x: x.points or 0, reverse=True)
+    users = User.query.all()
+    for user in users:
+        if remaining_time(user) <= 0:
+            finish_test(user)
+    db.session.commit()
+    user_list = sorted(users, key=lambda x: x.points or 0, reverse=True)
     return render_template('admin.html', users=user_list, title='Панель администратора')
 
 

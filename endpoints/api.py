@@ -6,11 +6,15 @@ from utils import json_response, save_answer as _save_answer
 def save_answer():
     answer_id = request.form.get('a')
     user_id = request.form.get('u', None)
-    success = _save_answer(answer_id, user_id)
-    result = {'ok': success}
+    result = _save_answer(answer_id, user_id)
+    success = False
+    if result is True:
+        success = True
+    response = {'ok': success}
     if not success:
-        return json_response(result, 400)
-    return json_response(result)
+        response['error'], response['error_code'] = result
+        return json_response(response, 400)
+    return json_response(response)
 
 
 def change_question_data():

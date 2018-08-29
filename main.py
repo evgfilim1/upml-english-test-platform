@@ -1,12 +1,13 @@
 from flask import render_template, redirect, url_for, session, g, request, flash
 from markdown import markdown
-from datetime import datetime, timedelta
+from datetime import datetime
 from random import shuffle
 from app import app
 from endpoints import admin, api
 from forms import LoginForm
 from models import Question, db, UserAnswer
-from utils import find_user, get_user, login_required, back, is_browser_supported
+from utils import (find_user, get_user, login_required, back, is_browser_supported, remaining_time,
+                   finish_test)
 
 
 @app.before_request
@@ -61,10 +62,8 @@ def solve():
     if g.user.start_time is None:
         g.user.start_time = datetime.utcnow()
         db.session.commit()
-    max_end_time = g.user.start_time + timedelta(seconds=app.config.get('TIME_TO_SOLVE', 3600))
-    remaining = max_end_time - datetime.utcnow()
-    return render_template('test.html',
-                           remaining=int(remaining.total_seconds()), answers=None, shuffle=shuffle,
+    remaining = remaining_time(g.user)
+    return render_template('test.html', remaining=int(remaining), answers=None, shuffle=shuffle,
                            questions=Question.query.order_by(Question.number).all())
 
 
@@ -84,16 +83,9 @@ def result(user_id=None):
             return redirect(back('admin_panel'))
     if request.method == 'POST':
         flash('Тест завершён!', category='success')
-        if user.end_time is None:
-            user.end_time = datetime.utcnow()
-            user.points = 0
-            for a in g.user.answers:
-                if a.is_correct:
-                    g.user.points += a.question.points
-            db.session.commit()
+        finish_test(user)
         return redirect(url_for('result'))
     if user.end_time is None:
-        # testctf_flag2_commit_diff
         if user_id is not None:
             flash('Тест ещё не был завершён!')
             return redirect(back('admin_panel'))
